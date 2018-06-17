@@ -27,7 +27,7 @@ class Application(tk.Frame):
     def createWidgets(self):
         self.uploadButton = tk.Button(self, text="Upload", command=self.upload)
         self.uploadButton.grid()
-        self.synthesizeButton = tkButton(self, text="Synthesize", command=self.synthesize)
+        self.synthesizeButton = tk.Button(self, text="Synthesize", command=self.synthesize)
         self.syntehsizeButton.grid()
         self.uploadedFile = tk.Label(self, text="")
         self.uploadedFile.grid()
