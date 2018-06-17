@@ -17,7 +17,9 @@ class Application(tk.Frame):
         self.grid()
         self.createWidgets()
         self.to_wav = to_wav
-        self.model = model
+
+        self.synth = MusicGenerator(model)
+
         mix.init()
         mix.music.load("MIDI_sample.mid")
         mix.music.play(0)
@@ -74,6 +76,36 @@ class Application(tk.Frame):
 
     #When this function is called it automatically synthesizes some music
     def synthesize(self):
+        try:
+            abcstr = self.synth.get()
+            filename = 'tmp.abc'
+            with open(filename, 'w+') as f:
+                f.write(abcstr)
+            self.to_wav(filename)
+            CHANNELS = 1
+            swidth = 2
+            Change_RATE = 2
+
+            self.uploadedFile = tk.Label(self, text=filename.split("/")[-1])
+            self.uploadedFile.grid()
+
+            spf = wave.open('out.wav', 'rb')
+            RATE = spf.getframerate()
+            signal = spf.readframes(-1)
+
+            name = "SynthMusic/" + filename.split("/")[-1].split(".")[0] + ".wav"
+
+            wf = wave.open(name, 'wb')
+            wf.setnchannels(CHANNELS)
+            wf.setsampwidth(swidth)
+            wf.setframerate(RATE * Change_RATE)
+            wf.writeframes(signal)
+            wf.close()
+
+            mix.music.load(name)
+            mix.music.play()
+        except:
+            self.synthesize()
 
 
 
