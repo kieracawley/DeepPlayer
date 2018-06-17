@@ -21,15 +21,14 @@ class Application(tk.Frame):
         self.synth = MusicGenerator(model)
 
         mix.init()
-        mix.music.load("MIDI_sample.mid")
-        mix.music.play(0)
-        mix.music.pause()
         if not os.path.exists("GeneratedMusic"):
             os.makedirs("GeneratedMusic")
 
     def createWidgets(self):
         self.uploadButton = tk.Button(self, text="Upload", command=self.upload)
         self.uploadButton.grid()
+        self.synthesizeButton = tkButton(self, text="Synthesize", command=self.synthesize)
+        self.syntehsizeButton.grid()
         self.uploadedFile = tk.Label(self, text="")
         self.uploadedFile.grid()
         self.playButton = tk.Button(self, text='Play', command=self.play)
