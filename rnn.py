@@ -125,11 +125,7 @@ def get(epoch, logs):
 
 print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
 
-model = load_model(r"C:\Users\Jason\PyCharmProjects\ABCRNN\saved_models\22-1.9782.h5")
 
-for i in range(10):
-    get(i, None)
-#
-# callback = ModelCheckpoint(r"C:\Users\Jason\PyCharmProjects\ABCRNN\saved_models\{epoch:02d}-{loss:.4f}.h5")
-# model.summary()
-# model.fit_generator(generator, len(corpus)//BATCH_SIZE//1000, epochs=120, verbose=1, callbacks=[callback, print_callback])
+callback = ModelCheckpoint(r"C:\Users\Jason\PyCharmProjects\ABCRNN\saved_models\{epoch:02d}-{loss:.4f}.h5")
+model.summary()
+model.fit_generator(generator, len(corpus)//BATCH_SIZE//1000, epochs=120, verbose=1, callbacks=[callback, print_callback])
