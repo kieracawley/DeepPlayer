@@ -28,7 +28,7 @@ class Application(tk.Frame):
         self.uploadButton = tk.Button(self, text="Upload", command=self.upload)
         self.uploadButton.grid()
         self.synthesizeButton = tk.Button(self, text="Synthesize", command=self.synthesize)
-        self.syntehsizeButton.grid()
+        self.synthesizeButton.grid()
         self.uploadedFile = tk.Label(self, text="")
         self.uploadedFile.grid()
         self.playButton = tk.Button(self, text='Play', command=self.play)
@@ -50,23 +50,16 @@ class Application(tk.Frame):
     def upload(self):
         filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("abc files","*.abc"),("all files","*.*")))
         self.to_wav(filename)
-        CHANNELS = 1
-        swidth = 2
-        Change_RATE = 2
 
         self.uploadedFile = tk.Label(self, text=filename.split("/")[-1])
         self.uploadedFile.grid()
 
         spf = wave.open('out.wav', 'rb')
-        RATE=spf.getframerate()
         signal = spf.readframes(-1)
 
         name = "GeneratedMusic/" + filename.split("/")[-1].split(".")[0] + ".wav"
 
         wf = wave.open(name, 'wb')
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(swidth)
-        wf.setframerate(RATE*Change_RATE)
         wf.writeframes(signal)
         wf.close()
 
@@ -81,23 +74,16 @@ class Application(tk.Frame):
             with open(filename, 'w+') as f:
                 f.write(abcstr)
             self.to_wav(filename)
-            CHANNELS = 1
-            swidth = 2
-            Change_RATE = 2
 
             self.uploadedFile = tk.Label(self, text=filename.split("/")[-1])
             self.uploadedFile.grid()
 
             spf = wave.open('out.wav', 'rb')
-            RATE = spf.getframerate()
             signal = spf.readframes(-1)
 
             name = "SynthMusic/" + filename.split("/")[-1].split(".")[0] + ".wav"
 
             wf = wave.open(name, 'wb')
-            wf.setnchannels(CHANNELS)
-            wf.setsampwidth(swidth)
-            wf.setframerate(RATE * Change_RATE)
             wf.writeframes(signal)
             wf.close()
 
