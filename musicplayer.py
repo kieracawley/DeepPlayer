@@ -46,13 +46,31 @@ class Application(tk.Frame):
 
     def upload(self):
         filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("abc files","*.abc"),("all files","*.*")))
-        stream = self.to_stream(filename)
-        self.uploadedFile = tk.Label(self, text=filename.split("/")[-1])
-        self.playButton.grid()
+        with open(filename) as f:
+            l = f.readlines()
 
-        self.uploadedFile.grid()
-        sp = midi.realtime.StreamPlayer(stream)
-        sp.play()
+        n = []
+        app = False
+        for i in l:
+            if i[0] == 'M':
+                n.append(i)
+            elif i[0] == 'K':
+                n.append(i)
+                app = True
+            elif app:
+                n.append(i)
+        with open(self.path, 'a') as f:
+            f.write('\n' + ' '.join(f))
+
+
+        stream = self.to_stream(filename)
+
+        # self.uploadedFile = tk.Label(self, text=filename.split("/")[-1])
+        # self.playButton.grid()
+        #
+        # self.uploadedFile.grid()
+        # sp = midi.realtime.StreamPlayer(stream)
+        # sp.play()
 
 
     def play(self):
