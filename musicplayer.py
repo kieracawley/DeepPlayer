@@ -7,14 +7,15 @@ from generate_music import MusicGenerator
 from keras.models import load_model
 from music21 import *
 
-model_path = "saved_models/153-1.5443.h5"
+model_path = r"C:\Users\Jason\PyCharmProjects\StuyHacks2018\saved_models\255-1.4700.h5"
 model = load_model(model_path)
 class Application(tk.Frame):
 
-    def __init__(self, master=None):
+    def __init__(self, master=None, path_to_train=r"C:\Users\Jason\PyCharmProjects\StuyHacks2018\training_data.txt"):
         tk.Frame.__init__(self, master)
         self.grid()
         self.createWidgets()
+        self.path = path_to_train
 
         def to_stream(fn):
             abc = converter.parse(fn)
@@ -29,8 +30,15 @@ class Application(tk.Frame):
             os.makedirs("GeneratedMusic")
 
     def createWidgets(self):
-        self.uploadButton = tk.Button(self, text="Upload", command=self.upload)
+        self.uploadButton = tk.Button(self, text="Upload", command=self.upload, width=50, height=10)
         self.uploadButton.grid()
+
+        self.playButton = tk.Button(self, text="Play", command=self.play)
+        self.playButton.grid()
+
+        self.songIndex = tk.Entry(self)
+        self.songIndex.grid()
+
         self.synthesizeButton = tk.Button(self, text="Synthesize", command=self.synthesize)
         self.synthesizeButton.grid()
 
@@ -42,11 +50,21 @@ class Application(tk.Frame):
         stream = self.to_stream(filename)
         self.uploadedFile = tk.Label(self, text=filename.split("/")[-1])
         self.uploadedFile.grid()
-
         sp = midi.realtime.StreamPlayer(stream)
-
         sp.play()
 
+
+    def play(self):
+        index = int(self.songIndex.get())
+        with open(self.path) as f:
+            a = f.read()
+        k = a.split('\n\n')
+        v = k[index]
+        z = [''] + v.split() + ['']
+        q = self.synth.parse_generated(z)
+        data = converter.parseData(q)
+        sp = midi.realtime.StreamPlayer(data)
+        sp.play()
 
     #When this function is called it automatically synthesizes some music
     def synthesize(self):
