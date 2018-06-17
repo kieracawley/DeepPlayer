@@ -30,12 +30,11 @@ class Application(tk.Frame):
             os.makedirs("GeneratedMusic")
 
     def createWidgets(self):
-        self.uploadButton = tk.Button(self, text="Upload", command=self.upload, width=50, height=10)
+        self.uploadButton = tk.Button(self, text="Upload", command=self.upload)
         self.uploadButton.grid()
 
         self.playButton = tk.Button(self, text="Play", command=self.play)
         self.playButton.grid()
-
         self.songIndex = tk.Entry(self)
         self.songIndex.grid()
 
@@ -49,6 +48,8 @@ class Application(tk.Frame):
         filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("abc files","*.abc"),("all files","*.*")))
         stream = self.to_stream(filename)
         self.uploadedFile = tk.Label(self, text=filename.split("/")[-1])
+        self.playButton.grid()
+
         self.uploadedFile.grid()
         sp = midi.realtime.StreamPlayer(stream)
         sp.play()
