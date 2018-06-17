@@ -6,7 +6,10 @@ import wave
 import os
 from  wavconverter import to_wav
 from generate_music import MusicGenerator
+from keras.models import load_model
 
+model_path = "saved_models/153-1.5443.h5"
+model = load_model(model_path)
 class Application(tk.Frame):
 
     def __init__(self, master=None):
@@ -14,6 +17,7 @@ class Application(tk.Frame):
         self.grid()
         self.createWidgets()
         self.to_wav = to_wav
+        self.model = model
         mix.init()
         mix.music.load("MIDI_sample.mid")
         mix.music.play(0)
@@ -70,6 +74,7 @@ class Application(tk.Frame):
 
     #When this function is called it automatically synthesizes some music
     def synthesize(self):
+
 
 
 app = Application()
