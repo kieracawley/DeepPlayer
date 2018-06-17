@@ -2,11 +2,10 @@
 import tkinter as tk
 from tkinter import filedialog
 import pygame.mixer as mix
-import wave
 import os
-from  wavconverter import to_wav
 from generate_music import MusicGenerator
 from keras.models import load_model
+from music21 import *
 
 model_path = "saved_models/153-1.5443.h5"
 model = load_model(model_path)
@@ -16,7 +15,12 @@ class Application(tk.Frame):
         tk.Frame.__init__(self, master)
         self.grid()
         self.createWidgets()
-        self.to_wav = to_wav
+
+        def to_stream(fn):
+            abc = converter.parse(fn)
+            return abc
+
+        self.to_stream = to_stream
 
         self.synth = MusicGenerator(model)
 
@@ -29,67 +33,30 @@ class Application(tk.Frame):
         self.uploadButton.grid()
         self.synthesizeButton = tk.Button(self, text="Synthesize", command=self.synthesize)
         self.synthesizeButton.grid()
-        self.uploadedFile = tk.Label(self, text="")
-        self.uploadedFile.grid()
-        self.playButton = tk.Button(self, text='Play', command=self.play)
-        self.playButton.grid(column="0", row="2")
-        self.pauseButton = tk.Button(self, text='Pause', command=self.pause)
-        self.pauseButton.grid(column="1", row="2")
+
         self.quitButton = tk.Button(self, text='Quit', command=self.quit)
         self.quitButton.grid(column="1", row="0")
 
-    def play(self):
-        mix.music.unpause()
-
-    def pause(self):
-        mix.music.pause()
-
-    def rewind(self):
-        mix.music.rewind()
-
     def upload(self):
         filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("abc files","*.abc"),("all files","*.*")))
-        self.to_wav(filename)
-
+        stream = self.to_stream(filename)
         self.uploadedFile = tk.Label(self, text=filename.split("/")[-1])
         self.uploadedFile.grid()
 
-        spf = wave.open('out.wav', 'rb')
-        signal = spf.readframes(-1)
+        sp = midi.realtime.StreamPlayer(stream)
 
-        name = "GeneratedMusic/" + filename.split("/")[-1].split(".")[0] + ".wav"
+        sp.play()
 
-        wf = wave.open(name, 'wb')
-        wf.writeframes(signal)
-        wf.close()
-
-        mix.music.load(name)
-        mix.music.play()
 
     #When this function is called it automatically synthesizes some music
     def synthesize(self):
         try:
             abcstr = self.synth.get()
-            filename = 'tmp.abc'
-            with open(filename, 'w+') as f:
-                f.write(abcstr)
-            self.to_wav(filename)
-
-            self.uploadedFile = tk.Label(self, text=filename.split("/")[-1])
-            self.uploadedFile.grid()
-
-            spf = wave.open('out.wav', 'rb')
-            signal = spf.readframes(-1)
-
-            name = "SynthMusic/" + filename.split("/")[-1].split(".")[0] + ".wav"
-
-            wf = wave.open(name, 'wb')
-            wf.writeframes(signal)
-            wf.close()
-
-            mix.music.load(name)
-            mix.music.play()
+            data = converter.parseData(abcstr)
+            sp = midi.realtime.StreamPlayer(data)
+            sp.play()
         except:
+            print('error thrown')
             self.synthesize()
 
 
